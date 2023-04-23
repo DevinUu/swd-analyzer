@@ -4,26 +4,26 @@
 
 #include <AnalyzerHelpers.h>
 
-#include "SWDAnalyzerResults.h"
-#include "SWDAnalyzer.h"
-#include "SWDAnalyzerSettings.h"
-#include "SWDUtils.h"
+#include "RiscSWDIOAnalyzerResults.h"
+#include "RiscSWDIOAnalyzer.h"
+#include "RiscSWDIOAnalyzerSettings.h"
+#include "RiscSWDIOUtils.h"
 
-SWDAnalyzerResults::SWDAnalyzerResults( SWDAnalyzer* analyzer, SWDAnalyzerSettings* settings )
+RiscSWDIOAnalyzerResults::RiscSWDIOAnalyzerResults( RiscSWDIOAnalyzer* analyzer, RiscSWDIOAnalyzerSettings* settings )
     : mSettings( settings ), mAnalyzer( analyzer )
 {
 }
 
-SWDAnalyzerResults::~SWDAnalyzerResults()
+RiscSWDIOAnalyzerResults::~RiscSWDIOAnalyzerResults()
 {
 }
 
-double SWDAnalyzerResults::GetSampleTime( S64 sample ) const
+double RiscSWDIOAnalyzerResults::GetSampleTime( S64 sample ) const
 {
     return ( sample - mAnalyzer->GetTriggerSample() ) / double( mAnalyzer->GetSampleRate() );
 }
 
-std::string SWDAnalyzerResults::GetSampleTimeStr( S64 sample ) const
+std::string RiscSWDIOAnalyzerResults::GetSampleTimeStr( S64 sample ) const
 {
     char time_str[ 128 ];
     AnalyzerHelpers::GetTimeString( sample, mAnalyzer->GetTriggerSample(), mAnalyzer->GetSampleRate(), time_str, sizeof( time_str ) );
@@ -36,7 +36,7 @@ std::string SWDAnalyzerResults::GetSampleTimeStr( S64 sample ) const
     return time_str;
 }
 
-void SWDAnalyzerResults::GetBubbleText( const Frame& f, DisplayBase display_base, std::vector<std::string>& results )
+void RiscSWDIOAnalyzerResults::GetBubbleText( const Frame& f, DisplayBase display_base, std::vector<std::string>& results )
 {
     results.clear();
 
@@ -154,7 +154,7 @@ void SWDAnalyzerResults::GetBubbleText( const Frame& f, DisplayBase display_base
     }
 }
 
-void SWDAnalyzerResults::GenerateBubbleText( U64 frame_index, Channel& channel, DisplayBase display_base )
+void RiscSWDIOAnalyzerResults::GenerateBubbleText( U64 frame_index, Channel& channel, DisplayBase display_base )
 {
     ClearResultStrings();
     Frame f = GetFrame( frame_index );
@@ -189,7 +189,7 @@ void SaveRecord( std::vector<std::string>& rec, std::ofstream& of )
     rec.clear();
 }
 
-void SWDAnalyzerResults::GenerateExportFile( const char* file, DisplayBase display_base, U32 export_type_user_id )
+void RiscSWDIOAnalyzerResults::GenerateExportFile( const char* file, DisplayBase display_base, U32 export_type_user_id )
 {
     std::ofstream of( file, std::ios::out );
 
@@ -254,7 +254,7 @@ void SWDAnalyzerResults::GenerateExportFile( const char* file, DisplayBase displ
     UpdateExportProgressAndCheckForCancel( num_frames, num_frames );
 }
 
-void SWDAnalyzerResults::GenerateFrameTabularText( U64 frame_index, DisplayBase display_base )
+void RiscSWDIOAnalyzerResults::GenerateFrameTabularText( U64 frame_index, DisplayBase display_base )
 {
     ClearTabularText();
 
@@ -266,13 +266,13 @@ void SWDAnalyzerResults::GenerateFrameTabularText( U64 frame_index, DisplayBase 
         AddTabularText( results.front().c_str() );
 }
 
-void SWDAnalyzerResults::GeneratePacketTabularText( U64 packet_id, DisplayBase display_base )
+void RiscSWDIOAnalyzerResults::GeneratePacketTabularText( U64 packet_id, DisplayBase display_base )
 {
     ClearResultStrings();
     AddResultString( "not supported" );
 }
 
-void SWDAnalyzerResults::GenerateTransactionTabularText( U64 transaction_id, DisplayBase display_base )
+void RiscSWDIOAnalyzerResults::GenerateTransactionTabularText( U64 transaction_id, DisplayBase display_base )
 {
     ClearResultStrings();
     AddResultString( "not supported" );

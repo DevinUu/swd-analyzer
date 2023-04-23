@@ -1,9 +1,9 @@
-#ifndef SWD_TYPES_H
-#define SWD_TYPES_H
+#ifndef RISCSWDIO_TYPES_H
+#define RISCSWDIO_TYPES_H
 
 #include <LogicPublicTypes.h>
 
-#include "SWDAnalyzerResults.h"
+#include "RiscSWDIOAnalyzerResults.h"
 
 // the possible frame types
 enum SWDFrameTypes
@@ -109,8 +109,8 @@ struct SWDOperation
     SWDRegisters reg;
 
     void Clear();
-    void AddFrames( SWDAnalyzerResults* pResults );
-    void AddMarkers( SWDAnalyzerResults* pResults );
+    void AddFrames( RiscSWDIOAnalyzerResults* pResults );
+    void AddMarkers( RiscSWDIOAnalyzerResults* pResults );
     void SetRegister( U32 select_reg );
 
     bool IsRead()
@@ -175,7 +175,7 @@ struct SWDRequestFrame : public Frame
     std::string GetRegisterName() const;
 };
 
-class SWDAnalyzer;
+class RiscSWDIOAnalyzer;
 
 // This object parses and buffers the bits of the SWD stream.
 // IsOperation and IsLineReset return true if the subsequent bits in
@@ -186,7 +186,7 @@ class SWDParser
     AnalyzerChannelData* mSWDIO;
     AnalyzerChannelData* mSWCLK;
 
-    SWDAnalyzer* mAnalyzer;
+    RiscSWDIOAnalyzer* mAnalyzer;
 
     std::vector<SWDBit> mBitsBuffer;
     U32 mSelectRegister;
@@ -197,7 +197,7 @@ class SWDParser
   public:
     SWDParser();
 
-    void Setup( AnalyzerChannelData* pSWDIO, AnalyzerChannelData* pSWCLK, SWDAnalyzer* pAnalyzer );
+    void Setup( AnalyzerChannelData* pSWDIO, AnalyzerChannelData* pSWCLK, RiscSWDIOAnalyzer* pAnalyzer );
 
     void Clear()
     {
@@ -211,4 +211,4 @@ class SWDParser
     SWDBit PopFrontBit();
 };
 
-#endif // SWD_TYPES_H
+#endif // RISCSWDIO_TYPES_H

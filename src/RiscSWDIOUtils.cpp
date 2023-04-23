@@ -1,7 +1,7 @@
 #include <AnalyzerHelpers.h>
 
-#include "SWDUtils.h"
-#include "SWDTypes.h"
+#include "RiscSWDIOUtils.h"
+#include "RiscSWDIOTypes.h"
 
 std::string GetRegisterName( SWDRegisters reg )
 {

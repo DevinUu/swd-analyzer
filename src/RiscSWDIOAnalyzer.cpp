@@ -3,24 +3,24 @@
 
 #include <AnalyzerChannelData.h>
 
-#include "SWDAnalyzer.h"
-#include "SWDAnalyzerSettings.h"
-#include "SWDUtils.h"
+#include "RiscSWDIOAnalyzer.h"
+#include "RiscSWDIOAnalyzerSettings.h"
+#include "RiscSWDIOUtils.h"
 
-SWDAnalyzer::SWDAnalyzer() : mSimulationInitilized( false )
+RiscSWDIOAnalyzer::RiscSWDIOAnalyzer() : mSimulationInitilized( false )
 {
     SetAnalyzerSettings( &mSettings );
 }
 
-SWDAnalyzer::~SWDAnalyzer()
+RiscSWDIOAnalyzer::~RiscSWDIOAnalyzer()
 {
     KillThread();
 }
 
-void SWDAnalyzer::SetupResults()
+void RiscSWDIOAnalyzer::SetupResults()
 {
     // reset the results
-    mResults.reset( new SWDAnalyzerResults( this, &mSettings ) );
+    mResults.reset( new RiscSWDIOAnalyzerResults( this, &mSettings ) );
     SetAnalyzerResults( mResults.get() );
 
     // set which channels will carry bubbles
@@ -28,7 +28,7 @@ void SWDAnalyzer::SetupResults()
     mResults->AddChannelBubblesWillAppearOn( mSettings.mSWCLK );
 }
 
-void SWDAnalyzer::WorkerThread()
+void RiscSWDIOAnalyzer::WorkerThread()
 {
     // SetupResults();
     // get the channel pointers
@@ -77,12 +77,12 @@ void SWDAnalyzer::WorkerThread()
     }
 }
 
-bool SWDAnalyzer::NeedsRerun()
+bool RiscSWDIOAnalyzer::NeedsRerun()
 {
     return false;
 }
 
-U32 SWDAnalyzer::GenerateSimulationData( U64 minimum_sample_index, U32 device_sample_rate,
+U32 RiscSWDIOAnalyzer::GenerateSimulationData( U64 minimum_sample_index, U32 device_sample_rate,
                                          SimulationChannelDescriptor** simulation_channels )
 {
     if( !mSimulationInitilized )
@@ -94,26 +94,26 @@ U32 SWDAnalyzer::GenerateSimulationData( U64 minimum_sample_index, U32 device_sa
     return mSimulationDataGenerator.GenerateSimulationData( minimum_sample_index, device_sample_rate, simulation_channels );
 }
 
-U32 SWDAnalyzer::GetMinimumSampleRateHz()
+U32 RiscSWDIOAnalyzer::GetMinimumSampleRateHz()
 {
     // this 1MHz limit is a little arbitrary, since the specs don't say much about the
     // valid frequency range a SWD stream should be in.
     return 1000000;
 }
 
-const char* SWDAnalyzer::GetAnalyzerName() const
+const char* RiscSWDIOAnalyzer::GetAnalyzerName() const
 {
     return ::GetAnalyzerName();
 }
 
 const char* GetAnalyzerName()
 {
-    return "SWD";
+    return "SWDIO for Risc";
 }
 
 Analyzer* CreateAnalyzer()
 {
-    return new SWDAnalyzer();
+    return new RiscSWDIOAnalyzer();
 }
 
 void DestroyAnalyzer( Analyzer* analyzer )

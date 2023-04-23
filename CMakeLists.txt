@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.11)
-project(swd_analyzer)
+project(riscswdio_analyzer)
 
 add_definitions( -DLOGIC2 )
 
@@ -12,18 +12,18 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 include(ExternalAnalyzerSDK)
 
 set(SOURCES 
-src/SWDAnalyzer.cpp
-src/SWDAnalyzer.h
-src/SWDAnalyzerResults.cpp
-src/SWDAnalyzerResults.h
-src/SWDAnalyzerSettings.cpp
-src/SWDAnalyzerSettings.h
-src/SWDSimulationDataGenerator.cpp
-src/SWDSimulationDataGenerator.h
-src/SWDTypes.cpp
-src/SWDTypes.h
-src/SWDUtils.cpp
-src/SWDUtils.h
+src/RiscSWDIOAnalyzer.cpp
+src/RiscSWDIOAnalyzer.h
+src/RiscSWDIOAnalyzerResults.cpp
+src/RiscSWDIOAnalyzerResults.h
+src/RiscSWDIOAnalyzerSettings.cpp
+src/RiscSWDIOAnalyzerSettings.h
+src/RiscSWDIOSimulationDataGenerator.cpp
+src/RiscSWDIOSimulationDataGenerator.h
+src/RiscSWDIOTypes.cpp
+src/RiscSWDIOTypes.h
+src/RiscSWDIOUtils.cpp
+src/RiscSWDIOUtils.h
 )
 
-add_analyzer_plugin(swd_analyzer SOURCES ${SOURCES})
+add_analyzer_plugin(riscswdio_analyzer SOURCES ${SOURCES})

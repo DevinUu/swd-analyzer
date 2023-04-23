@@ -1,7 +1,7 @@
-#include "SWDSimulationDataGenerator.h"
-#include "SWDAnalyzerSettings.h"
+#include "RiscSWDIOSimulationDataGenerator.h"
+#include "RiscSWDIOAnalyzerSettings.h"
 
-#include "SWDTypes.h"
+#include "RiscSWDIOTypes.h"
 
 #define TENTH_US 0.0000001
 
@@ -758,15 +758,15 @@ SimulationData simul_data[] = {
     { 0x00, 0x00000000 },
 };
 
-SWDSimulationDataGenerator::SWDSimulationDataGenerator()
+RiscSWDIOSimulationDataGenerator::RiscSWDIOSimulationDataGenerator()
 {
 }
 
-SWDSimulationDataGenerator::~SWDSimulationDataGenerator()
+RiscSWDIOSimulationDataGenerator::~RiscSWDIOSimulationDataGenerator()
 {
 }
 
-void SWDSimulationDataGenerator::Initialize( U32 simulation_sample_rate, SWDAnalyzerSettings* settings )
+void RiscSWDIOSimulationDataGenerator::Initialize( U32 simulation_sample_rate, RiscSWDIOAnalyzerSettings* settings )
 {
     mSimulationSampleRateHz = simulation_sample_rate;
     mSettings = settings;
@@ -780,7 +780,7 @@ void SWDSimulationDataGenerator::Initialize( U32 simulation_sample_rate, SWDAnal
     mSimulCnt = sizeof( simul_data ) / sizeof( SimulationData ) - 1;
 }
 
-U32 SWDSimulationDataGenerator::GenerateSimulationData( U64 largest_sample_requested, U32 sample_rate,
+U32 RiscSWDIOSimulationDataGenerator::GenerateSimulationData( U64 largest_sample_requested, U32 sample_rate,
                                                         SimulationChannelDescriptor** simulation_channels )
 {
     U64 adjusted_largest_sample_requested =
@@ -824,7 +824,7 @@ U32 SWDSimulationDataGenerator::GenerateSimulationData( U64 largest_sample_reque
     return mSWDSimulationChannels.GetCount();
 }
 
-void SWDSimulationDataGenerator::OutputWriteBit( BitState state )
+void RiscSWDIOSimulationDataGenerator::OutputWriteBit( BitState state )
 {
     mSWDIO->TransitionIfNeeded( state );
 
@@ -837,7 +837,7 @@ void SWDSimulationDataGenerator::OutputWriteBit( BitState state )
     AdvanceAllBySec( TENTH_US * 3 );
 }
 
-void SWDSimulationDataGenerator::OutputReadBit( BitState first_half, BitState second_half )
+void RiscSWDIOSimulationDataGenerator::OutputReadBit( BitState first_half, BitState second_half )
 {
     mSWDIO->TransitionIfNeeded( first_half );
 
@@ -852,7 +852,7 @@ void SWDSimulationDataGenerator::OutputReadBit( BitState first_half, BitState se
     AdvanceAllBySec( TENTH_US * 3 );
 }
 
-void SWDSimulationDataGenerator::OutputLineReset()
+void RiscSWDIOSimulationDataGenerator::OutputLineReset()
 {
     int cnt;
 
@@ -868,14 +868,14 @@ void SWDSimulationDataGenerator::OutputLineReset()
     AdvanceAllBySec( TENTH_US * 50 );
 }
 
-void SWDSimulationDataGenerator::OutputTurnaround( BitState state )
+void RiscSWDIOSimulationDataGenerator::OutputTurnaround( BitState state )
 {
     AdvanceAllBySec( TENTH_US * 10 );
     OutputWriteBit( state );
     AdvanceAllBySec( TENTH_US * 10 );
 }
 
-bool SWDSimulationDataGenerator::OutputRequest( U8 req, U8 ack, BitState first_data_bit )
+bool RiscSWDIOSimulationDataGenerator::OutputRequest( U8 req, U8 ack, BitState first_data_bit )
 {
     bool is_write = ( req & 0x04 ) == 0;
 
@@ -903,7 +903,7 @@ bool SWDSimulationDataGenerator::OutputRequest( U8 req, U8 ack, BitState first_d
     return is_write;
 }
 
-void SWDSimulationDataGenerator::OutputData( U32 data, bool is_write )
+void RiscSWDIOSimulationDataGenerator::OutputData( U32 data, bool is_write )
 {
     // the 32 data bits
     U32 bmask;

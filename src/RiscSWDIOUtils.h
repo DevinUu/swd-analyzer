@@ -7,7 +7,7 @@
 #include <string>
 #include <LogicPublicTypes.h>
 
-#include "SWDTypes.h"
+#include "RiscSWDIOTypes.h"
 
 // returns string descriptions of the register name and the bits with values
 std::string GetRegisterName( SWDRegisters reg );

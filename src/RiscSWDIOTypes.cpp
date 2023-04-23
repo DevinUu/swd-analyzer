@@ -6,9 +6,9 @@
 #include <AnalyzerChannelData.h>
 #include <AnalyzerHelpers.h>
 
-#include "SWDAnalyzer.h"
-#include "SWDTypes.h"
-#include "SWDUtils.h"
+#include "RiscSWDIOAnalyzer.h"
+#include "RiscSWDIOTypes.h"
+#include "RiscSWDIOUtils.h"
 
 const int TRAN_REQ_AND_ACK = 8 + 1 + 3;             // request/turnaround/ACK
 const int TRAN_READ_LENGTH = TRAN_REQ_AND_ACK + 33; // previous + 32bit data + parity
@@ -64,7 +64,7 @@ void SWDOperation::Clear()
     bits.clear();
 }
 
-void SWDOperation::AddFrames( SWDAnalyzerResults* pResults )
+void SWDOperation::AddFrames( RiscSWDIOAnalyzerResults* pResults )
 {
     Frame f;
 
@@ -137,7 +137,7 @@ void SWDOperation::AddFrames( SWDAnalyzerResults* pResults )
     }
 }
 
-void SWDOperation::AddMarkers( SWDAnalyzerResults* pResults )
+void SWDOperation::AddMarkers( RiscSWDIOAnalyzerResults* pResults )
 {
     for( std::vector<SWDBit>::iterator bi( bits.begin() ); bi != bits.end(); bi++ )
     {
@@ -242,7 +242,7 @@ SWDParser::SWDParser() : mSWDIO( 0 ), mSWCLK( 0 )
 {
 }
 
-void SWDParser::Setup( AnalyzerChannelData* pSWDIO, AnalyzerChannelData* pSWCLK, SWDAnalyzer* pAnalyzer )
+void SWDParser::Setup( AnalyzerChannelData* pSWDIO, AnalyzerChannelData* pSWCLK, RiscSWDIOAnalyzer* pAnalyzer )
 {
     mSWDIO = pSWDIO;
     mSWCLK = pSWCLK;

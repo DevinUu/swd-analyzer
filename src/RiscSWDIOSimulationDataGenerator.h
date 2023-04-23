@@ -1,23 +1,23 @@
-#ifndef SWD_SIMULATION_DATA_GENERATOR_H
-#define SWD_SIMULATION_DATA_GENERATOR_H
+#ifndef RISCSWDIO_SIMULATION_DATA_GENERATOR_H
+#define RISCSWDIO_SIMULATION_DATA_GENERATOR_H
 
 #include <AnalyzerHelpers.h>
 
-#include "SWDTypes.h"
+#include "RiscSWDIOTypes.h"
 
-class SWDAnalyzerSettings;
+class RiscSWDIOAnalyzerSettings;
 
-class SWDSimulationDataGenerator
+class RiscSWDIOSimulationDataGenerator
 {
   public:
-    SWDSimulationDataGenerator();
-    ~SWDSimulationDataGenerator();
+    RiscSWDIOSimulationDataGenerator();
+    ~RiscSWDIOSimulationDataGenerator();
 
-    void Initialize( U32 simulation_sample_rate, SWDAnalyzerSettings* settings );
+    void Initialize( U32 simulation_sample_rate, RiscSWDIOAnalyzerSettings* settings );
     U32 GenerateSimulationData( U64 newest_sample_requested, U32 sample_rate, SimulationChannelDescriptor** simulation_channels );
 
   protected:
-    SWDAnalyzerSettings* mSettings;
+    RiscSWDIOAnalyzerSettings* mSettings;
     U32 mSimulationSampleRateHz;
     U32 mSimulCnt;
 
@@ -43,4 +43,4 @@ class SWDSimulationDataGenerator
     SimulationChannelDescriptor* mSWCLK;
 };
 
-#endif // SWD_SIMULATION_DATA_GENERATOR_H
+#endif // RISCSWDIO_SIMULATION_DATA_GENERATOR_H

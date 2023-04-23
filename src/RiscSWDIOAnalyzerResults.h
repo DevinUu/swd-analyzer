@@ -1,16 +1,16 @@
-#ifndef SWD_ANALYZER_RESULTS_H
-#define SWD_ANALYZER_RESULTS_H
+#ifndef RISCSWDIO_ANALYZER_RESULTS_H
+#define RISCSWDIO_ANALYZER_RESULTS_H
 
 #include <AnalyzerResults.h>
 
-class SWDAnalyzer;
-class SWDAnalyzerSettings;
+class RiscSWDIOAnalyzer;
+class RiscSWDIOAnalyzerSettings;
 
-class SWDAnalyzerResults : public AnalyzerResults
+class RiscSWDIOAnalyzerResults : public AnalyzerResults
 {
   public:
-    SWDAnalyzerResults( SWDAnalyzer* analyzer, SWDAnalyzerSettings* settings );
-    virtual ~SWDAnalyzerResults();
+    RiscSWDIOAnalyzerResults( RiscSWDIOAnalyzer* analyzer, RiscSWDIOAnalyzerSettings* settings );
+    virtual ~RiscSWDIOAnalyzerResults();
 
     virtual void GenerateBubbleText( U64 frame_index, Channel& channel, DisplayBase display_base );
     virtual void GenerateExportFile( const char* file, DisplayBase display_base, U32 export_type_user_id );
@@ -22,7 +22,7 @@ class SWDAnalyzerResults : public AnalyzerResults
     double GetSampleTime( S64 sample ) const;
     std::string GetSampleTimeStr( S64 sample ) const;
 
-    SWDAnalyzerSettings* GetSettings()
+    RiscSWDIOAnalyzerSettings* GetSettings()
     {
         return mSettings;
     }
@@ -31,8 +31,8 @@ class SWDAnalyzerResults : public AnalyzerResults
     void GetBubbleText( const Frame& f, DisplayBase display_base, std::vector<std::string>& results );
 
   protected: // vars
-    SWDAnalyzerSettings* mSettings;
-    SWDAnalyzer* mAnalyzer;
+    RiscSWDIOAnalyzerSettings* mSettings;
+    RiscSWDIOAnalyzer* mAnalyzer;
 };
 
-#endif // SWD_ANALYZER_RESULTS_H
+#endif // RISCSWDIO_ANALYZER_RESULTS_H

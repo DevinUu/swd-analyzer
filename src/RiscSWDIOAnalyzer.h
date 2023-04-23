@@ -1,19 +1,19 @@
-#ifndef SWD_ANALYZER_H
-#define SWD_ANALYZER_H
+#ifndef RISCSWDIO_ANALYZER_H
+#define RISCSWDIO_ANALYZER_H
 
 #include <Analyzer.h>
 
-#include "SWDAnalyzerSettings.h"
-#include "SWDAnalyzerResults.h"
-#include "SWDSimulationDataGenerator.h"
+#include "RiscSWDIOAnalyzerSettings.h"
+#include "RiscSWDIOAnalyzerResults.h"
+#include "RiscSWDIOSimulationDataGenerator.h"
 
-#include "SWDTypes.h"
+#include "RiscSWDIOTypes.h"
 
-class SWDAnalyzer : public Analyzer2
+class RiscSWDIOAnalyzer : public Analyzer2
 {
   public:
-    SWDAnalyzer();
-    virtual ~SWDAnalyzer();
+    RiscSWDIOAnalyzer();
+    virtual ~RiscSWDIOAnalyzer();
     virtual void SetupResults();
     virtual void WorkerThread();
 
@@ -24,13 +24,13 @@ class SWDAnalyzer : public Analyzer2
     virtual bool NeedsRerun();
 
   protected: // vars
-    SWDAnalyzerSettings mSettings;
-    std::auto_ptr<SWDAnalyzerResults> mResults;
+    RiscSWDIOAnalyzerSettings mSettings;
+    std::auto_ptr<RiscSWDIOAnalyzerResults> mResults;
 
     AnalyzerChannelData* mSWDIO;
     AnalyzerChannelData* mSWCLK;
 
-    SWDSimulationDataGenerator mSimulationDataGenerator;
+    RiscSWDIOSimulationDataGenerator mSimulationDataGenerator;
 
     SWDParser mSWDParser;
 
@@ -41,4 +41,4 @@ extern "C" ANALYZER_EXPORT const char* __cdecl GetAnalyzerName();
 extern "C" ANALYZER_EXPORT Analyzer* __cdecl CreateAnalyzer();
 extern "C" ANALYZER_EXPORT void __cdecl DestroyAnalyzer( Analyzer* analyzer );
 
-#endif // SWD_ANALYZER_H
+#endif // RISCSWDIO_ANALYZER_H
