@@ -5,6 +5,22 @@
 
 #include "RiscSWDIOAnalyzerResults.h"
 
+// // the possible frame types
+// enum SWDFrameTypes
+// {
+//     SWDFT_Error,
+//     SWDFT_Bit,
+
+//     SWDFT_LineReset,
+
+//     SWDFT_Request,
+//     SWDFT_Turnaround,
+//     SWDFT_ACK,
+//     SWDFT_WData,
+//     SWDFT_DataParity,
+//     SWDFT_TrailingBits,
+// };
+
 // the possible frame types
 enum SWDFrameTypes
 {
@@ -12,51 +28,93 @@ enum SWDFrameTypes
     SWDFT_Bit,
 
     SWDFT_LineReset,
+    SWDFT_HandShake,
 
-    SWDFT_Request,
+    SWDFT_Start,
+    SWDFT_Status,
     SWDFT_Turnaround,
+    SWDFT_Request,
     SWDFT_ACK,
     SWDFT_WData,
-    SWDFT_DataParity,
+    SWDFT_RData,
+    SWDFT_CRC,
+    SWDFT_Stop,
     SWDFT_TrailingBits,
 };
 
-// the DebugPort and AccessPort registers as defined by SWD
-enum SWDRegisters
+// the status defined
+enum SWDStatus
 {
-    SWDR_undefined,
+    SWDS_Wait_Pwrtcntov = 0x20+0x2,
+    SWDS_Wait_CfgbitValid = 0x20+0x1,
+    SWDS_Prog_Erase = 0x10+0x2,
+    SWDS_Prog_Prog = 0x10+0x1,
+    SWDS_Debug_Busy = 0x8+0x2,
+    SWDS_Debug_Stop = 0x8+0x1,
+    SWDS_Test_DigSignal = 0x4+0x2,
+    SWDS_Test_AnaSignal = 0x4+0x1,
+};
 
-    // DP
-    SWDR_DP_IDCODE,
-    SWDR_DP_ABORT,
-    SWDR_DP_CTRL_STAT,
-    SWDR_DP_WCR,
-    SWDR_DP_RESEND,
-    SWDR_DP_SELECT,
-    SWDR_DP_RDBUFF,
-    SWDR_DP_ROUTESEL,
+// the request defined
+enum SWDRequest
+{
+    SWDR_W_Status,
+    SWDR_R_Status,
+    SWDR_W_Address,
+    SWDR_R_Address,
+    SWDR_W_Data,
+    SWDR_R_Data, 
+    SWDR_W_Ctrl,
+    SWDR_R_Address,   
 
-    // AP
-    SWDR_AP_CSW,
-    SWDR_AP_TAR,
-    SWDR_AP_DRW,
-    SWDR_AP_BD0,
-    SWDR_AP_BD1,
-    SWDR_AP_BD2,
-    SWDR_AP_BD3,
-    SWDR_AP_CFG,
-    SWDR_AP_BASE,
-    SWDR_AP_RAZ_WI,
-    SWDR_AP_IDR,
 };
 
 // some ACK values
 enum SWDACK
 {
-    ACK_OK = 1,
-    ACK_WAIT = 2,
-    ACK_FAULT = 4,
+    ACK_OK,
+    ACK_FAULT,
 };
+
+
+// // the DebugPort and AccessPort registers as defined by SWD
+// enum SWDRegisters
+// {
+//     SWDR_undefined,
+
+//     // DP
+//     SWDR_DP_IDCODE,
+//     SWDR_DP_ABORT,
+//     SWDR_DP_CTRL_STAT,
+//     SWDR_DP_WCR,
+//     SWDR_DP_RESEND,
+//     SWDR_DP_SELECT,
+//     SWDR_DP_RDBUFF,
+//     SWDR_DP_ROUTESEL,
+
+//     // AP
+//     SWDR_AP_CSW,
+//     SWDR_AP_TAR,
+//     SWDR_AP_DRW,
+//     SWDR_AP_BD0,
+//     SWDR_AP_BD1,
+//     SWDR_AP_BD2,
+//     SWDR_AP_BD3,
+//     SWDR_AP_CFG,
+//     SWDR_AP_BASE,
+//     SWDR_AP_RAZ_WI,
+//     SWDR_AP_IDR,
+// };
+
+// // some ACK values
+// enum SWDACK
+// {
+//     ACK_OK = 1,
+//     ACK_WAIT = 2,
+//     ACK_FAULT = 4,
+// };
+
+
 
 // this is the basic token of the analyzer
 // objects of this type are buffered in SWDOperation
