@@ -28,6 +28,7 @@ enum SWDFrameTypes
     SWDFT_Bit,
 
     SWDFT_LineReset,
+    SWDFT_HandShake,
 
     SWDFT_Start,
     SWDFT_Status,
@@ -35,6 +36,7 @@ enum SWDFrameTypes
     SWDFT_Request,
     SWDFT_ACK,
     SWDFT_WData,
+    SWDFT_RData,
     SWDFT_CRC,
     SWDFT_Stop,
     SWDFT_TrailingBits,
