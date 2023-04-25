@@ -36,7 +36,10 @@ enum SWDFrameTypes
     SWDFT_Request,
     SWDFT_ACK,
     SWDFT_WData,
+<<<<<<< HEAD
     SWDFT_RData,
+=======
+>>>>>>> 508a65ea49ca3788ca6392bd1b41a2c1cafa0ce4
     SWDFT_CRC,
     SWDFT_Stop,
     SWDFT_TrailingBits,
