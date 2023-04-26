@@ -21,6 +21,12 @@
 //     SWDFT_TrailingBits,
 // };
 
+/*
+| == turn
+frame1 = start | status | nack | CRC | stop
+frame2 = start | status | ack  | request | wdata/rdata | ack |...| wdata/rdata | nack | CRC | stop
+
+*/
 // the possible frame types
 enum SWDFrameTypes
 {
@@ -41,7 +47,15 @@ enum SWDFrameTypes
     SWDFT_Stop,
     SWDFT_TrailingBits,
 };
+/*
+status=MODE[3:0] + STATUS[1:0]
 
+MODE[3:0]={wait,prog,debug,test}
+wait STATUS[1:0]={pwrtcntov,cfgbitvalid}
+prog STATUS[1:0]={erase,busy}
+debug STATUS[1:0]={busy,stop}
+test STATUS[1:0]={digsignal,anasignal}
+*/
 // the status defined
 enum SWDStatus
 {
@@ -55,6 +69,14 @@ enum SWDStatus
     SWDS_Test_AnaSignal = 0x4+0x1,
 };
 
+/*
+request=TYPE[1:0] + R/W 
+
+TYPE[1:0]=00 ;status
+        =01 ;addr
+        =10 ;data
+        =11 ;ctrl
+*/
 // the request defined
 enum SWDRequest
 {
