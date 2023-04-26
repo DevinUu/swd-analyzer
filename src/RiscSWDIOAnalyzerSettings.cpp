@@ -9,6 +9,7 @@ RiscSWDIOAnalyzerSettings::RiscSWDIOAnalyzerSettings() : mVDD( UNDEFINED_CHANNEL
     // init the interface
     mVDDInterface.SetTitleAndTooltip( "VDD", "VDD" );
     mVDDInterface.SetChannel( mVDD );
+    mVDDInterface.SetSelectionOfNoneIsAllowed(true);//可选择none选项关闭
 
     mPDTInterface.SetTitleAndTooltip( "PDT", "PDT" );
     mPDTInterface.SetChannel( mPDT );
@@ -48,17 +49,12 @@ RiscSWDIOAnalyzerSettings::~RiscSWDIOAnalyzerSettings()
 
 bool RiscSWDIOAnalyzerSettings::SetSettingsFromInterfaces()
 {
-    if( mVDDInterface.GetChannel() == UNDEFINED_CHANNEL )
-    {
-        SetErrorText( "Please select an input for the channel VDD." );
-        return false;
-    }
-        if( mPDTInterface.GetChannel() == UNDEFINED_CHANNEL )
+    if( mPDTInterface.GetChannel() == UNDEFINED_CHANNEL )
     {
         SetErrorText( "Please select an input for the channel PDT." );
         return false;
     }
-        if( mPCKInterface.GetChannel() == UNDEFINED_CHANNEL )
+    if( mPCKInterface.GetChannel() == UNDEFINED_CHANNEL )
     {
         SetErrorText( "Please select an input for the channel PCK." );
         return false;
