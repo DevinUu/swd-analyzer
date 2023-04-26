@@ -83,11 +83,6 @@ void RiscSWDIOAnalyzerResults::GetBubbleText( const Frame& f, DisplayBase displa
             results.push_back( "ACK OK" );
             results.push_back( "OK" );
         }
-        else if( f.mData1 == ACK_WAIT )
-        {
-            results.push_back( "ACK WAIT" );
-            results.push_back( "WAIT" );
-        }
         else if( f.mData1 == ACK_FAULT )
         {
             results.push_back( "ACK FAULT" );
