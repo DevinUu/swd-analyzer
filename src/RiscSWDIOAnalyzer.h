@@ -27,6 +27,9 @@ class RiscSWDIOAnalyzer : public Analyzer2
     RiscSWDIOAnalyzerSettings mSettings;
     std::auto_ptr<RiscSWDIOAnalyzerResults> mResults;
 
+    AnalyzerChannelData* mPDT;
+    AnalyzerChannelData* mPCK;
+
     AnalyzerChannelData* mSWDIO;
     AnalyzerChannelData* mSWCLK;
 

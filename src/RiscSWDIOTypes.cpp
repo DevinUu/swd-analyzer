@@ -238,22 +238,33 @@ void SWDLineReset::AddFrames( AnalyzerResults* pResults )
 
 // ********************************************************************************
 
-SWDParser::SWDParser() : mSWDIO( 0 ), mSWCLK( 0 )
+SWDParser::SWDParser() : mPDT( 0 ), mPCK( 0 ),mSWDIO( 0 ), mSWCLK( 0 )
 {
 }
 
-void SWDParser::Setup( AnalyzerChannelData* pSWDIO, AnalyzerChannelData* pSWCLK, RiscSWDIOAnalyzer* pAnalyzer )
+void SWDParser::Setup( AnalyzerChannelData* pPDT, AnalyzerChannelData* pPCK,AnalyzerChannelData* pSWDIO, AnalyzerChannelData* pSWCLK, RiscSWDIOAnalyzer* pAnalyzer )
 {
+    mPDT = pPDT;
+    mPCK = pPCK;
+
     mSWDIO = pSWDIO;
     mSWCLK = pSWCLK;
 
     mAnalyzer = pAnalyzer;
 
+    //为了保证从clk的0电平开始解码，初始化时要跳过clk高电平
     // skip the SWCLK high
     if( mSWCLK->GetBitState() == BIT_HIGH )
     {
-        mSWCLK->AdvanceToNextEdge();
-        mSWDIO->AdvanceToAbsPosition( mSWCLK->GetSampleNumber() );
+        mSWCLK->AdvanceToNextEdge();//运行光标到跳变沿，即上升沿
+        mSWDIO->AdvanceToAbsPosition( mSWCLK->GetSampleNumber() );//swdio和clk光标同步
+    }
+
+        // skip the PCK high
+    if( mPCK->GetBitState() == BIT_HIGH )
+    {
+        mPCK->AdvanceToNextEdge();
+        mPDT->AdvanceToAbsPosition( mPCK->GetSampleNumber() );
     }
 }
 
@@ -263,8 +274,14 @@ SWDBit SWDParser::ParseBit()
 
     assert( mSWCLK->GetBitState() == BIT_LOW );
 
+    // 记录低电平起始光标
     rbit.low_start = mSWCLK->GetSampleNumber();
 
+    // 获取clk上升沿位置，并往前1个sample位置，即低电平的位置，作为clk的光标
+    // swdio光标移动到clk光标相同的位置
+    // 记录上升沿的光标，同clk光标位置
+    // 设置上升沿状态
+    // 移动clk、dio光标位置到上升沿，高电平的位置
     // sample the rising edge 1 sample before the the actual
     mSWCLK->AdvanceToAbsPosition( mSWCLK->GetSampleOfNextEdge() - 1 );
     mSWDIO->AdvanceToAbsPosition( mSWCLK->GetSampleNumber() );
@@ -282,13 +299,18 @@ SWDBit SWDParser::ParseBit()
     rbit.state_rising = mSWDIO->GetBitState();
     */
 
+    // clk光标前进到下降沿，即低电平的位置
+    // swdio同样
     // go to the falling edge
     mSWCLK->AdvanceToNextEdge();
     mSWDIO->AdvanceToAbsPosition( mSWCLK->GetSampleNumber() );
 
+    // 记录下降沿光标位置
+    // 记录下降沿状态为低电平
     rbit.falling = mSWCLK->GetSampleNumber();
     rbit.state_falling = mSWDIO->GetBitState();
 
+    // 记录低电平光标的结束位置
     rbit.low_end = mSWCLK->GetSampleOfNextEdge();
 
     return rbit;
@@ -317,9 +339,11 @@ bool SWDParser::IsOperation( SWDOperation& tran )
 {
     tran.Clear();
 
+    //装载SWD request + trn + ack = 12bit
     // read enough bits so that we don't have to worry of subscripts out of range
     BufferBits( TRAN_REQ_AND_ACK );
 
+    //从 bit流中，将request字节提取出来
     // turn the bits into a byte
     tran.request_byte = 0;
     for( size_t cnt = 0; cnt < 8; ++cnt )
@@ -328,10 +352,12 @@ bool SWDParser::IsOperation( SWDOperation& tran )
         tran.request_byte |= ( mBitsBuffer[ cnt ].IsHigh() ? 0x80 : 0 );
     }
 
+    //首先判断request中的起始位，停止位，和park位是否是正确的默认值
     // are the request's constant bits (start, stop & park) wrong?
     if( ( tran.request_byte & 0xC1 ) != 0x81 )
         return false;
 
+    //解析 request，记录每个位到对象中
     // get the indivitual bits
     tran.APnDP = ( tran.request_byte & 0x02 ) != 0;                   //(mBitsBuffer[1].state_falling == BIT_HIGH);
     tran.RnW = ( tran.request_byte & 0x04 ) != 0;                     //(mBitsBuffer[2].state_falling == BIT_HIGH);
@@ -339,6 +365,7 @@ bool SWDParser::IsOperation( SWDOperation& tran )
                                                                       //| (mBitsBuffer[4].state_falling == BIT_HIGH ? (1<<3) : 0);
     tran.parity_read = ( ( tran.request_byte & 0x20 ) != 0 ? 1 : 0 ); //(mBitsBuffer[5].state_falling == BIT_HIGH ? 1 : 0);
 
+    //计算并核对校验码
     // check parity
     int check = ( mBitsBuffer[ 1 ].state_rising == BIT_HIGH ? 1 : 0 ) + ( mBitsBuffer[ 2 ].state_rising == BIT_HIGH ? 1 : 0 ) +
                 ( mBitsBuffer[ 3 ].state_rising == BIT_HIGH ? 1 : 0 ) + ( mBitsBuffer[ 4 ].state_rising == BIT_HIGH ? 1 : 0 );
@@ -346,14 +373,17 @@ bool SWDParser::IsOperation( SWDOperation& tran )
     if( tran.parity_read != ( check & 1 ) )
         return false;
 
+    //根据request中addr以及上次的select AP值，设置真实的register寄存器
     // Set the actual register in this operation based on the data from the request
     // and the previous select register state.
     tran.SetRegister( mSelectRegister );
 
+    //获取ack的值
     // get the ACK value
     tran.ACK = ( mBitsBuffer[ 9 ].state_rising == BIT_HIGH ? 1 : 0 ) + ( mBitsBuffer[ 10 ].state_rising == BIT_HIGH ? 2 : 0 ) +
                ( mBitsBuffer[ 11 ].state_rising == BIT_HIGH ? 4 : 0 );
 
+    //响应ack的请求，OK、wait、或fault
     // we're only handling OK, WAIT and FAULT responses
     if( tran.ACK == ACK_WAIT || tran.ACK == ACK_FAULT )
     {
@@ -366,10 +396,10 @@ bool SWDParser::IsOperation( SWDOperation& tran )
 
         return true;
     }
-
+    //ack不是ok，则退出
     if( tran.ACK != ACK_OK )
         return false;
-
+    //加载剩余的45个bit数据
     BufferBits( TRAN_READ_LENGTH );
 
     // turnaround if write operation
@@ -397,6 +427,7 @@ bool SWDParser::IsOperation( SWDOperation& tran )
         }
     }
 
+    //计算校验码并判断是否正确
     // data parity
     tran.data_parity = bi[ ndx ].IsHigh( read_rising ) ? 1 : 0;
 
@@ -404,7 +435,7 @@ bool SWDParser::IsOperation( SWDOperation& tran )
 
     if( !tran.data_parity_ok )
         return false;
-
+    //如果是写，则记住值
     // if this is a SELECT register write, remember the value
     if( tran.reg == SWDR_DP_SELECT && !tran.RnW )
         mSelectRegister = tran.data;

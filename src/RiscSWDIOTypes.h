@@ -183,6 +183,9 @@ class RiscSWDIOAnalyzer;
 class SWDParser
 {
   private:
+    AnalyzerChannelData* mPDT;
+    AnalyzerChannelData* mPCK;
+
     AnalyzerChannelData* mSWDIO;
     AnalyzerChannelData* mSWCLK;
 
@@ -197,7 +200,7 @@ class SWDParser
   public:
     SWDParser();
 
-    void Setup( AnalyzerChannelData* pSWDIO, AnalyzerChannelData* pSWCLK, RiscSWDIOAnalyzer* pAnalyzer );
+    void Setup( AnalyzerChannelData* pPDT, AnalyzerChannelData* pPCK, AnalyzerChannelData* pSWDIO, AnalyzerChannelData* pSWCLK, RiscSWDIOAnalyzer* pAnalyzer );
 
     void Clear()
     {

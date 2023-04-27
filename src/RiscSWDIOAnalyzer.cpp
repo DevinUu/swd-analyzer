@@ -24,18 +24,25 @@ void RiscSWDIOAnalyzer::SetupResults()
     SetAnalyzerResults( mResults.get() );
 
     // set which channels will carry bubbles
-    mResults->AddChannelBubblesWillAppearOn( mSettings.mSWDIO );
-    mResults->AddChannelBubblesWillAppearOn( mSettings.mSWCLK );
+    mResults->AddChannelBubblesWillAppearOn( mSettings.mPDT );
+    mResults->AddChannelBubblesWillAppearOn( mSettings.mPCK );
+
+    // mResults->AddChannelBubblesWillAppearOn( mSettings.mSWDIO );
+    // mResults->AddChannelBubblesWillAppearOn( mSettings.mSWCLK );
 }
 
 void RiscSWDIOAnalyzer::WorkerThread()
 {
     // SetupResults();
     // get the channel pointers
+    mPDT = GetAnalyzerChannelData( mSettings.mPDT );
+    mPCK = GetAnalyzerChannelData( mSettings.mPCK );
+
     mSWDIO = GetAnalyzerChannelData( mSettings.mSWDIO );
     mSWCLK = GetAnalyzerChannelData( mSettings.mSWCLK );
 
-    mSWDParser.Setup( mSWDIO, mSWCLK, this );
+    //channel data对象指针初始化给对应通道，并且光标走到指定起始位置
+    mSWDParser.Setup( mPDT, mPCK,mSWDIO, mSWCLK, this );
 
     // these are our three objects that SWDParser will fill with data
     // on calls to IsOperation or IsLineReset
