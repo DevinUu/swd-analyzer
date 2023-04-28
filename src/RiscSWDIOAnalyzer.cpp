@@ -52,6 +52,9 @@ void RiscSWDIOAnalyzer::WorkerThread()
 
     mSWDParser.Clear();
 
+    //任何被解析器解析出来的bit，都会被询问是否是有效的操作，或者是信号复位
+    //有效的操作，是指请求正确，并且校验通过
+    //信号复位，是指至少发送50个bit的高电平
     // For every new bit the parser extracts from the stream,
     // ask if this can be a valid operation or line reset.
     // A valid operation will have the constant part of the request correctly set,
